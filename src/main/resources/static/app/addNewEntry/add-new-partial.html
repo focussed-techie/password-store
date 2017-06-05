@@ -1,0 +1,54 @@
+<div id="addNewEntry">
+    <table>
+        <th>Please add a new Entry now...</th>
+        <tr ng-show="addNewCtrl.message.length > 0">
+            <td colspan="2"> {{addNewCtrl.message}}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>Site Username</label>
+            </td>
+            <td>
+                <input type="text" ng-model="addNewCtrl.username"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Site Password</label>
+            </td>
+            <td>
+                <input type="password" ng-model="addNewCtrl.password"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Reenter site Password</label>
+            </td>
+            <td>
+                <input type="password" ng-model="addNewCtrl.rePassword" ng-match="addNewCtrl.password"/>
+                <span  ng-show="addNewEntry.rePassword.$error.match">Passwords do not match.</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Site Name</label>
+            </td>
+            <td>
+                <input type="text" ng-model="addNewCtrl.siteName"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Site Url</label>
+            </td>
+            <td>
+                <input type="text" ng-model="addNewCtrl.siteUrl"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><button ng-click="addNew()">Submit</button> </td>
+        </tr>
+     </table>
+
+</div>

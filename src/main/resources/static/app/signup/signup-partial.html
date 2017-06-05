@@ -1,0 +1,28 @@
+<div id="singup">
+    <table>
+        <tr>
+            <td>
+                <label>Sign Up Username</label>
+            </td>
+            <td>
+                <input type="text" ng-model="signUpctrl.username"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Sign up Password</label>
+            </td>
+            <td>
+                <input type="password" ng-model="signUpctrl.password"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><button ng-click="signup()">Submit</button> </td>
+        </tr>
+        <tr ng-show="signUpctrl.message.length > 0">
+            <td colspan="2"> {{signUpctrl.message}}</td>
+        </tr>
+
+    </table>
+
+</div>

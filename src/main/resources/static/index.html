@@ -1,0 +1,36 @@
+<!doctype html>
+<html ng-app="passwordApp">
+<title>Password store</title>
+<head>
+    <script src="js/vendor/angular.js"></script>
+    <script src="js/vendor/angular-route.js"></script>
+
+
+</head>
+<body>
+<nav>
+    <a href="#!/dashboard">Dashboard</a>
+    <!--<a href="#!/addNewEntry">Add New Entry</a>-->
+    <a href="#!/changePassword">Change Password</a>
+    <a href="/logout">Logout</a>
+
+</nav>
+<header>
+<h1>Hello from password store app</h1>
+</header>
+<section>
+    <ng-view>
+
+    </ng-view>
+</section>
+
+<script src="app/app.js"></script>
+<script src="app/addNewEntry/add-new-module.js"></script>
+<script src="app/addNewEntry/add-new-controller.js"></script>
+<script src="app/dashboard/dashboard-module.js"></script>
+<script src="app/dashboard/dashboard-controller.js"></script>
+<script src="app/changePassword/change-password-module.js"></script>
+<script src="app/changePassword/change-password-controller.js"></script>
+
+</body>
+</html>

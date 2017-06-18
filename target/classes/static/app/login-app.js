@@ -1,24 +1,26 @@
 (function(){
-    var passwordApp = angular.module("passwordLoginApp",['ngRoute','loginModule','signUpModule']);
+    var passwordApp = angular.module("passwordLoginApp",['ui.router','loginModule','signUpModule','ui.validate']);
 
     passwordApp.config(configuration);
-    configuration.$inject = ['$locationProvider','$routeProvider'];
+    configuration.$inject = ['$stateProvider','$urlRouterProvider'];
 
-    function configuration($locationProvider, $routeProvider){
+    function configuration($stateProvider,$urlRouterProvider){
 
-        $routeProvider.when('/login',{
-            controller : 'loginController',
-            templateUrl : 'app/login/login-partial.html'
-        })
-            .when('/signup',{
-                controller :'signUpController as signUpctrl',
-                controllerAs :'signUpctrl',
-                templateUrl : 'app/signup/signup-partial.html'
+      $urlRouterProvider.otherwise('/login');
 
-            })
-            .otherwise({
-                redirectTo :'/login'
-            });
+        $stateProvider
+            .state('login',{
+            url:"/login",
+            controller:'loginController',
+            templateUrl :'app/login/login-partial.html'
+
+        }).state('signup',{
+            url: '/signup',
+            controller :'signUpController as signUpctrl',
+            controllerAs :'signUpctrl',
+            templateUrl : 'app/signup/signup-partial.html'
+
+        });
 
     }
 

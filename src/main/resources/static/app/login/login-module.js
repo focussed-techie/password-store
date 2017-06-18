@@ -1,5 +1,5 @@
 (function () {
-    var loginModule = angular.module("loginModule",['ngRoute']);
+    var loginModule = angular.module("loginModule",['ui.router']);
 
 
 

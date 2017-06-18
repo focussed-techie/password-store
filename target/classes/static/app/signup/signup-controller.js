@@ -2,16 +2,28 @@
     var singupModule = angular.module("signUpModule");
     singupModule.controller("signUpController",signUpController);
 
-    function signUpController($scope,$http,$location, $routeParams){
+    function signUpController($scope,$http,$location){
         var ctrl = this;
         ctrl.username = '';
         ctrl.password = '';
+        ctrl.confirmPassword = '';
         ctrl.message = '';
 
 
 
         $scope.signup = signup;
+        $scope.match=match;
+        $scope.doesUserExist=doesUserExist;
 
+        function doesUserExist(value){
+          console.log("calling service to verify");
+           return $http.get("/usernameexists/"+value);
+
+        }
+
+        function match(value){
+            return value ==ctrl.password;
+        }
 
 
         function signup(){

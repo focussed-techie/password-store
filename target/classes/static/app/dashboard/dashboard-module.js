@@ -1,5 +1,5 @@
 (function () {
-    var dashboardModule = angular.module("dashboardModule",[]);
+    var dashboardModule = angular.module("dashboardModule",['ui.router']);
 
 
 

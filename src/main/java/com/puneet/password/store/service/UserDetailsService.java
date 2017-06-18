@@ -109,4 +109,11 @@ public class UserDetailsService {
         Authentication authenticationToken = SecurityContextHolder.getContext().getAuthentication();
         return authenticationToken.getCredentials().toString();
     }
+
+
+    public Optional<UserDetailsVo> findUserByUserName(String username){
+        UserDetailsVo  userDetailsVo = userDetailsDao.findByUsername(username);
+
+        return userDetailsVo == null ? Optional.empty():Optional.of(userDetailsVo);
+    }
 }

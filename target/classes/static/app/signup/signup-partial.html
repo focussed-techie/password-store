@@ -1,11 +1,14 @@
-<div id="singup">
+<div id="signup">
+    <form name="signupForm" ng-submit="signup()" novalidate>
     <table>
         <tr>
             <td>
                 <label>Sign Up Username</label>
             </td>
             <td>
-                <input type="text" ng-model="signUpctrl.username"/>
+                <input type="text" name="username" ui-validate-async="'doesUserExist($modelValue)'" required ng-model="signUpctrl.username"/>
+                <span ng-show="signupForm.username.$error.required && signupForm.username.$touched">Please enter the Username</span>
+                <span ng-show="signupForm.username.$error.validatorAsync && signupForm.username.$touched">UserName already exists. Please choose another Username</span>
             </td>
         </tr>
         <tr>
@@ -13,16 +16,32 @@
                 <label>Sign up Password</label>
             </td>
             <td>
-                <input type="password" ng-model="signUpctrl.password"/>
+                <input  type="password" required ng-model="signUpctrl.password" name="password"/>
+                <span ng-show="signupForm.password.$error.required && signupForm.password.$touched">Please enter your password.</span>
+
+
             </td>
         </tr>
         <tr>
-            <td colspan="2"><button ng-click="signup()">Submit</button> </td>
+            <td>
+                <label>Confirm Password</label>
+            </td>
+            <td>
+                <input ui-validate="'match($value)'" ui-validate-watch="'password'" required type="password" name="confirmPassword" ng-model="signUpctrl.confirmPassword"/>
+                <span ng-show="signupForm.confirmPassword.$error.validator && signupForm.confirmPassword.$touched">Passwords dont Match</span>
+                <span ng-show="signupForm.confirmPassword.$error.required && signupForm.confirmPassword.$touched">Please enter your password again.</span>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td colspan="2"><input type="submit" ng-disabled="signupForm.$invalid" name="submit" value="Submit"/> </td>
         </tr>
         <tr ng-show="signUpctrl.message.length > 0">
             <td colspan="2"> {{signUpctrl.message}}</td>
         </tr>
 
     </table>
+    </form>
 
 </div>

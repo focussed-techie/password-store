@@ -37,4 +37,6 @@ public interface UserDetailsDao extends JpaRepository<UserDetailsVo,Long> {
     }*/
 
     public UserDetailsVo findByUsernameAndPassword(String userName, String password);
+
+    public UserDetailsVo findByUsername(String username);
 }

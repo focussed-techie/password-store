@@ -1,5 +1,5 @@
 (function () {
-    var signupModule = angular.module("signUpModule",[]);
+    var signupModule = angular.module("signUpModule",['ui.validate','ui.router']);
 
 
 

@@ -2,7 +2,7 @@
     var dashboardModule = angular.module("dashboardModule");
     dashboardModule.controller("dashboardController",dashboardController);
 
-    function dashboardController($scope,$http,$location, $routeParams,$window){
+    function dashboardController($scope,$http,$location,$window){
         var ctrl = this;
         ctrl.storage=[];
         ctrl.passwordDisplay = false;

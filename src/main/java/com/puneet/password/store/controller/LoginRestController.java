@@ -7,11 +7,9 @@ import com.puneet.password.store.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 public class LoginRestController {
@@ -30,10 +28,25 @@ public class LoginRestController {
         UserDetailsVo userDetailsVo = new UserDetailsVo();
         userDetailsVo.setUsername(userValues.getUsername());
         userDetailsVo.setPassword(hashCreator.createHashFrom(userValues.getPassword()));
-
-        userDetailsService.save(userDetailsVo);
+        Optional<UserDetailsVo> optionalUser = userDetailsService.getUserDetailsFrom(userDetailsVo.getUsername(),userDetailsVo.getPassword());
+        if(optionalUser.isPresent()){
+            throw new RuntimeException("User Already exists");
+        }
+       userDetailsService.save(userDetailsVo);
 
         return HttpStatus.OK.toString();
+    }
+    @RequestMapping(value = "/usernameexists/{username}", method = RequestMethod.GET)
+    public @ResponseBody boolean doesUserExist(@PathVariable ("username") String username){
+      Optional<UserDetailsVo> voOptional =   userDetailsService.findUserByUserName(username);
+      if(voOptional.isPresent()){
+            throw new RuntimeException("User already exists");
+        }
+        else {
+          return false;
+      }
+
+
     }
 
 

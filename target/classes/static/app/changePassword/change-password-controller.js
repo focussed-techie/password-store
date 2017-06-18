@@ -2,16 +2,22 @@
     var changePasswordModule = angular.module("changePasswordModule");
     changePasswordModule.controller("changePasswordController",changePasswordController);
 
-    function changePasswordController($scope,$http,$location, $routeParams,$window){
+    function changePasswordController($scope,$http,$location,$window){
         var ctrl = this;
         ctrl.newPassword = '';
+        ctrl.newConfirmPassword = '';
         ctrl.currentPassword = '';
         ctrl.message = '';
 
 
 
-        $scope.signup = signup;
 
+        $scope.signup = signup;
+        $scope.match=match;
+
+        function match(value){
+            return value ==ctrl.newPassword;
+        }
 
 
         function signup(){
@@ -25,7 +31,8 @@
 
 
                 },function(response){
-                    ctrl.message = "There was some Changing your password. Sorry about that..."+response.data;
+                    ctrl.message = "There was some error while Changing your password. Sorry about that..."+response.data;
+
                 });
 
 

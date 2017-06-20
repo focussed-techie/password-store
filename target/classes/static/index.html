@@ -5,6 +5,9 @@
     <script src="js/vendor/angular.js"></script>
     <script src="js/vendor/angular-ui-router.js"></script>
     <script src="/js/vendor/validate.js"></script>
+    <script src="js/vendor/ui-bootstrap.js"></script>
+    <script src="js/vendor/ui-bootstrap-tpls.js"></script>
+    <link rel="stylesheet" href="js/vendor/ui-bootstrap-csp.css">
 
 
 </head>
@@ -19,9 +22,8 @@
 <h1>Hello from password store app</h1>
 </header>
 <section>
-    <div ui-view>
-
-    </div>
+    <div ui-view="headerView"></div>
+    <div ui-view="bodyView"></div>
 </section>
 
 <script src="app/app.js"></script>
@@ -31,6 +33,9 @@
 <script src="app/dashboard/dashboard-controller.js"></script>
 <script src="app/changePassword/change-password-module.js"></script>
 <script src="app/changePassword/change-password-controller.js"></script>
+<script src="app/alert/alert-module.js"></script>
+<script src="app/alert/alert-controller.js"></script>
+<script src="app/alert/alert-service.js"></script>
 
 </body>
 </html>

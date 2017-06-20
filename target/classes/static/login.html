@@ -4,16 +4,23 @@
     <script src="js/vendor/angular.js"></script>
     <script src="js/vendor/angular-ui-router.js"></script>
     <script src="/js/vendor/validate.js"></script>
-
+    <script src="js/vendor/ui-bootstrap.js"></script>
+    <script src="js/vendor/ui-bootstrap-tpls.js"></script>
+    <link rel="stylesheet" href="js/vendor/ui-bootstrap-csp.css">
 </head>
 <body ng-app="passwordLoginApp">
-<div ui-view>
+<div ui-view="headerView"></div>
+<div ui-view="bodyView"></div>
 
-</div>
+
 <script src="app/login-app.js"></script>
+<script src="app/alert/alert-module.js"></script>
+<script src="app/alert/alert-controller.js"></script>
+<script src="app/alert/alert-service.js"></script>
 <script src="app/login/login-module.js"></script>
 <script src="app/login/login-controller.js"></script>
 <script src="app/signup/signup-module.js"></script>
 <script src="app/signup/signup-controller.js"></script>
+
 </body>
 </html>

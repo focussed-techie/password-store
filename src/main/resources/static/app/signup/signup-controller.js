@@ -2,7 +2,7 @@
     var singupModule = angular.module("signUpModule");
     singupModule.controller("signUpController",signUpController);
 
-    function signUpController($scope,$http,$location){
+    function signUpController($scope,$http,$location,alertService){
         var ctrl = this;
         ctrl.username = '';
         ctrl.password = '';
@@ -32,10 +32,11 @@
             $http.post('/signup',userObject)
                 .then(function (response)
                 {
-                    ctrl.message = "Your account has been created";
-                    $location.path('/login');
+                    alertService.addAlert({type:'warning', message : 'Your account is created!!!'});
+           //         $location.path('/login');
                 },function(response){
-                    ctrl.message = "There was some error creating your account. Sorry about that...";
+                    alertService.addAlert({type:'warning', message : 'There was some error creating your account. Sorry about that..'});
+
                 });
 
 

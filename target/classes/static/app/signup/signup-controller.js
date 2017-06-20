@@ -33,8 +33,8 @@
                 .then(function (response)
                 {
                     alertService.addAlert({type:'warning', message : 'Your account is created!!!'});
-           //         $location.path('/login');
-                },function(response){
+                    $location.path('/login');
+                }).catch(function(response){
                     alertService.addAlert({type:'warning', message : 'There was some error creating your account. Sorry about that..'});
 
                 });

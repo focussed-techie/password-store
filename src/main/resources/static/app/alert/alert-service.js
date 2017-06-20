@@ -5,18 +5,20 @@
 
 
     function alertService($rootScope){
-        $rootScope.alerts=[];
-        $rootScope.alerts.push({type:'warning',message:'testing alert service'});
+        var service =this;
+
+        service.alerts=[];
+       // service.alerts.push({type : 'warning',message : 'testing alert service'});
 
         this.addAlert = function addAlert(alert){
-            $rootScope.alerts.push(alert);
+            service.alerts.push(alert);
 
         }
         this.getAlerts = function getAlerts(){
-            return $rootScope.alerts;
+            return service.alerts;
         }
         this.removeAlert = function removeAlert(index){
-            $rootScope.alerts.splice(index,1);
+            service.alerts.splice(index,1);
         }
 
     }

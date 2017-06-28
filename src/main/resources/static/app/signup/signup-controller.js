@@ -32,7 +32,7 @@
             $http.post('/signup',userObject)
                 .then(function (response)
                 {
-                    alertService.addAlert({type:'warning', message : 'Your account is created!!!'});
+                    alertService.addAlert({type:'success', message : 'Your account is created!!!'});
                     $location.path('/login');
                 }).catch(function(response){
                     alertService.addAlert({type:'warning', message : 'There was some error creating your account. Sorry about that..'});

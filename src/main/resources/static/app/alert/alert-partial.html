@@ -2,6 +2,5 @@
     <!--<script type="text/ng-template" id="alert.html">
         <div ng-transclude></div>
     </script>-->
-<h1>Alert space here</h1>
     <div uib-alert ng-repeat="alert in alertCtrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.message}}</div>
 </div>

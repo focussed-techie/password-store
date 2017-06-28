@@ -8,7 +8,7 @@
         var service =this;
 
         service.alerts=[];
-        service.alerts.push({type : 'warning',message : 'testing alert service'});
+       // service.alerts.push({type : 'warning',message : 'testing alert service'});
 
         this.addAlert = function addAlert(alert){
             service.alerts.push(alert);

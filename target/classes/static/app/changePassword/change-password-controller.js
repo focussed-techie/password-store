@@ -2,7 +2,7 @@
     var changePasswordModule = angular.module("changePasswordModule");
     changePasswordModule.controller("changePasswordController",changePasswordController);
 
-    function changePasswordController($scope,$http,$location,$window){
+    function changePasswordController($scope,$http,$window,alertService){
         var ctrl = this;
         ctrl.newPassword = '';
         ctrl.newConfirmPassword = '';
@@ -26,12 +26,12 @@
             $http.post('/changePassword',userObject)
                 .then(function (response)
                 {
-                    ctrl.message = "Your password has been changed";
+                    alertService.addAlert({type:'warning', message : 'Your Password is changed!!!'});
                     $window.location.href = "logout";
 
 
                 },function(response){
-                    ctrl.message = "There was some error while Changing your password. Sorry about that..."+response.data;
+                    alertService.addAlert({type:'danger', message : 'There was an error changing your password. Please try again later!!!'});
 
                 });
 

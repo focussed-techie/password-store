@@ -7,10 +7,16 @@
     <script src="js/vendor/ui-bootstrap.js"></script>
     <script src="js/vendor/ui-bootstrap-tpls.js"></script>
     <link rel="stylesheet" href="js/vendor/ui-bootstrap-csp.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
 </head>
 <body ng-app="passwordLoginApp">
-<div ui-view="headerView"></div>
-<div ui-view="bodyView"></div>
+<div class="page-header">
+  <h1 align="center"> Welcome to My Password App.</h1>
+</div>
+
+<div  class="container" ui-view="headerView"></div>
+<div  class="container" ui-view="bodyView"></div>
 
 
 <script src="app/login-app.js"></script>

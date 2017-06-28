@@ -2,7 +2,7 @@
     var dashboardModule = angular.module("dashboardModule");
     dashboardModule.controller("dashboardController",dashboardController);
 
-    function dashboardController($scope,$http,$location,$window){
+    function dashboardController($http,alertService){
         var ctrl = this;
         ctrl.storage=[];
         ctrl.passwordDisplay = false;
@@ -37,16 +37,17 @@
 
 
             $http.post('/addNewEntry',userObject)
-                .then(function (response)
-                {
-                    ctrl.message = "Your entry is added";
-                    getDashboardData();
+                .then(successful).catch(error);
+        }
 
+        function successful(){
+                alertService.addAlert({type:'warning', message : 'Entry is Successful !!!'});
+                getDashboardData();
 
-                },function(response){
-                    ctrl.message = "There was some error creating your account. Sorry about that... Please try again later";
+        }
 
-                });
+        function error(){
+                alertService.addAlert({type:'danger', message : 'There was an error storing your entry in DB !!!'});
         }
 
 
@@ -68,13 +69,13 @@
             copyElement.blur();
         }
 
-        function edit(index,id){
+        function edit(index){
             ctrl.storage[index].isEditable = true;
         }
 
-        function save(index,id){
+        function save(index){
             var changedValue = ctrl.storage[index];
-            $http.post("/saveData",changedValue).then(getDashboardData);
+            $http.post("/saveData",changedValue).then(successful).catch(error);
 
         }
         function cancel(index,id){

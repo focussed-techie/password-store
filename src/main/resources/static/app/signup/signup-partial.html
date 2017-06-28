@@ -1,47 +1,47 @@
 <div id="signup">
-    <form name="signupForm" ng-submit="signup()" novalidate>
-    <table>
-        <tr>
-            <td>
-                <label>Sign Up Username</label>
-            </td>
-            <td>
-                <input type="text" name="username" ui-validate-async="'doesUserExist($modelValue)'" required ng-model="signUpctrl.username"/>
-                <span ng-show="signupForm.username.$error.required && signupForm.username.$touched">Please enter the Username</span>
-                <span ng-show="signupForm.username.$error.validatorAsync && signupForm.username.$touched">UserName already exists. Please choose another Username</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label>Sign up Password</label>
-            </td>
-            <td>
-                <input  type="password" required ng-model="signUpctrl.password" name="password"/>
-                <span ng-show="signupForm.password.$error.required && signupForm.password.$touched">Please enter your password.</span>
+    <div class="col-sm-6">
+        <div class="jumbotron">
+            <h1>Please Sign up </h1>
+        </div>
+    </div>
+    <div class="col-sm-6">
+    <form name="signupForm"  class="form-horizontal" ng-submit="signup()" novalidate>
+        <div class="form-group">
+            <label class="control-label col-sm-6" for="username">Sign Up Username</label>
+            <div class="col-sm-6">
+                <input type="text" name="username" id="username" ui-validate-async="'doesUserExist($modelValue)'" required ng-model="signUpctrl.username"/>
+                <div ng-show="signupForm.username.$error.required && signupForm.username.$touched">Please enter the Username</div>
+                <div ng-show="signupForm.username.$error.validatorAsync && signupForm.username.$touched">UserName already exists. Please choose another Username</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-6" for="password">Sign Up Password</label>
+            <div class="col-sm-6">
+                <input  type="password"  id="password" required ng-model="signUpctrl.password" name="password"/>
+                <div ng-show="signupForm.password.$error.required && signupForm.password.$touched">Please enter your password.</div>
+            </div>
+        </div>
 
 
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label>Confirm Password</label>
-            </td>
-            <td>
-                <input ui-validate="'match($value)'" ui-validate-watch="'password'" required type="password" name="confirmPassword" ng-model="signUpctrl.confirmPassword"/>
-                <span ng-show="signupForm.confirmPassword.$error.validator && signupForm.confirmPassword.$touched">Passwords dont Match</span>
-                <span ng-show="signupForm.confirmPassword.$error.required && signupForm.confirmPassword.$touched">Please enter your password again.</span>
-            </td>
-        </tr>
+        <div class="form-group">
+            <label class="control-label col-sm-6" for="confirmPassword">Confirm Password</label>
+            <div class="col-sm-6">
+                <input ui-validate="'match($value)'" ui-validate-watch="'password'" required type="password" id="confirmPassword" name="confirmPassword" ng-model="signUpctrl.confirmPassword"/>
+                <div ng-show="signupForm.confirmPassword.$error.validator && signupForm.confirmPassword.$touched">Passwords dont Match</div>
+                <div ng-show="signupForm.confirmPassword.$error.required && signupForm.confirmPassword.$touched">Please enter your password again.</div>
+            </div>
+        </div>
 
 
-        <tr>
-            <td colspan="2"><input type="submit" ng-disabled="signupForm.$invalid" name="submit" value="Submit"/> </td>
-        </tr>
-        <tr ng-show="signUpctrl.message.length > 0">
-            <td colspan="2"> {{signUpctrl.message}}</td>
-        </tr>
 
+        <div class="form-group">
+            <div class="col-sm-offset-6 col-sm-6">
+                <button class="btn btn-default" ng-disabled="signupForm.$invalid" name="submit" value="Submit">Submit</button>
+            </div>
+        </div>
     </table>
     </form>
+    </div>
 
 </div>

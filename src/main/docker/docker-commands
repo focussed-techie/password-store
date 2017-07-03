@@ -1,0 +1,2 @@
+clean package docker:build
+docker run -p 8443:8443  --name=password-store --volume=/home/puneet/workspaces/java-workspaces/password-store/src/database:/apps/database -t puneet/password-store

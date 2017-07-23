@@ -109,7 +109,7 @@ function RSADoPrivate(x) {
 // "ctext" is an even-length hex string and the output is a plain string.
 function RSADecrypt(ctext) {
   var c = parseBigInt(ctext, 16);
-  var m = this.doPrivate(c);
+  var m = this.doPublic(c);
   if(m == null) return null;
   return pkcs1unpad2(m, (this.n.bitLength()+7)>>3);
 }

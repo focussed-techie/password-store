@@ -51,7 +51,7 @@
                 <input type="password"  ng-model="userdata.password"/>
                 <input type="checkbox" id="checkbox" ng-model="userdata.showPassword"/>
                 <label for="checkbox">Show password :</label>
-                <span ng-show="userdata.showPassword">{{userdata.password}}</span>
+                <span ng-show="userdata.showPassword">{{rsaService.decryptData(userdata.password)}}</span>
             </td>
 
 

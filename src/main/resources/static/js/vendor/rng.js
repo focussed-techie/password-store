@@ -7,6 +7,7 @@
 var rng_state;
 var rng_pool;
 var rng_pptr;
+var rng_psize;
 
 // Mix in a 32-bit integer into the pool
 function rng_seed_int(x) {

@@ -2,7 +2,7 @@
     var changePasswordModule = angular.module("changePasswordModule");
     changePasswordModule.controller("changePasswordController",changePasswordController);
 
-    function changePasswordController($scope,$http,$window,alertService){
+    function changePasswordController($scope,$http,$window,alertService,rsaService){
         var ctrl = this;
         ctrl.newPassword = '';
         ctrl.newConfirmPassword = '';
@@ -21,7 +21,10 @@
 
 
         function signup(){
-            var userObject = {'currentPassword' : ctrl.currentPassword, 'newPassword' : ctrl.newPassword};
+
+            var encryptedPassword = rsaService.encryptData(ctrl.newPassword);
+            var encryptedOldPassword = rsaService.encryptData(ctrl.currentPassword);
+            var userObject = {'currentPassword' : encryptedOldPassword, 'newPassword' : encryptedPassword};
 
             $http.post('/changePassword',userObject)
                 .then(function (response)

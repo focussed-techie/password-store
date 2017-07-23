@@ -14,7 +14,7 @@ public class HashCreatorTest {
     @Test
     public void decrypt() throws Exception {
 
-        //System.out.println(hashCreator.decrypt("Qk+0n64leG8RIvxwgsLhvA==","testing123"));
+        //System.out.println(hashCreator.decryptFromUi("Qk+0n64leG8RIvxwgsLhvA==","testing123"));
     }
 
     @Test

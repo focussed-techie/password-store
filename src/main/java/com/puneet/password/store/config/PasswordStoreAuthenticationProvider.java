@@ -39,6 +39,7 @@ public class PasswordStoreAuthenticationProvider extends AbstractUserDetailsAuth
             Collection<GrantedAuthority> grantedAuthorityCollection = new ArrayList<>();
             grantedAuthorityCollection.add(() -> "ROLE_USER");
             UserDetails userDetails = new User(username, authentication.getCredentials().toString(), grantedAuthorityCollection);
+
             return userDetails;
         }else {
             throw new BadCredentialsException("Username or password does not match");

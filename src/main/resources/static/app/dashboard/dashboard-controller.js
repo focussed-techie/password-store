@@ -2,7 +2,7 @@
     var dashboardModule = angular.module("dashboardModule");
     dashboardModule.controller("dashboardController",dashboardController);
 
-    function dashboardController($http,alertService){
+    function dashboardController($http,alertService,rsaService){
         var ctrl = this;
         ctrl.storage=[];
         ctrl.passwordDisplay = false;
@@ -53,14 +53,18 @@
 
         function display(response){
             ctrl.storage = response.data;
-            ctrl.storage.forEach(function (thisValue){thisValue.isEditable = false; thisValue.showPassword =false;});
+            ctrl.storage.forEach(function (thisValue){
+                thisValue.isEditable = false; thisValue.showPassword =false;
+                thisValue.passwordDisplayValue = rsaService.decryptData(thisValue.password);
+            });
             ctrl.prestineStorage = angular.copy(ctrl.storage);
+
 
         }
 
         function copyToClipBoard(index,event){
             var passwordObj = ctrl.storage[index];
-            var password = passwordObj.password;
+            var password = rsaService.decryptData(passwordObj.password);
             var copyElement = document.getElementById("clipboardData");
             copyElement.value=password;
             copyElement.select();

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @RestController
@@ -22,12 +23,15 @@ public class LoginRestController {
     private UserDetailsService userDetailsService;
 
 
+
+
     @RequestMapping(value = "/signup" ,consumes = MediaType.APPLICATION_JSON_VALUE )
-    public @ResponseBody  String signup(@RequestBody UserValues userValues){
+    public @ResponseBody  String signup(@RequestBody UserValues userValues,HttpSession session){
 
         UserDetailsVo userDetailsVo = new UserDetailsVo();
         userDetailsVo.setUsername(userValues.getUsername());
-        userDetailsVo.setPassword(hashCreator.createHashFrom(userValues.getPassword()));
+        String decryptedPassword = hashCreator.decryptFromUi(session.getId(),userValues.getPassword());
+        userDetailsVo.setPassword(hashCreator.createHashFrom(decryptedPassword));
         Optional<UserDetailsVo> optionalUser = userDetailsService.getUserDetailsFrom(userDetailsVo.getUsername(),userDetailsVo.getPassword());
         if(optionalUser.isPresent()){
             throw new RuntimeException("User Already exists");

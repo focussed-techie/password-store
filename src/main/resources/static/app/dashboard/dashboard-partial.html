@@ -4,8 +4,10 @@
         <tr>
             <td>Site Name</td>
             <td>Site Url</td>
+            <td>Description</td>
             <td>User name</td>
             <td colspan="2">Password</td>
+
 
             <td>Edit?</td>
         </tr>
@@ -28,6 +30,15 @@
             <td ng-if="userdata.id == ''">
                 <input  type="text" ng-model="userdata.siteUrl" />
             </td>
+
+            <td ng-if="userdata.id != ''">
+                <span ng-show="!userdata.isEditable">{{userdata.description}}</span>
+                <input ng-show="userdata.isEditable" type="text" ng-model="userdata.description" />
+            </td>
+            <td ng-if="userdata.id == ''">
+                <input  type="text" ng-model="userdata.description" />
+            </td>
+
 
             <td ng-if="userdata.id != ''">
                 <span ng-show="!userdata.isEditable">{{userdata.username}}</span>

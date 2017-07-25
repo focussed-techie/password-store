@@ -4,7 +4,7 @@ package com.puneet.password.store.service;
 import com.puneet.password.store.dao.PasswordDetailsDao;
 import com.puneet.password.store.dao.UserDetailsDao;
 import com.puneet.password.store.hash.HashCreator;
-import com.puneet.password.store.model.SiteDetailVo;
+import com.puneet.password.store.model.EntryDetailVo;
 import com.puneet.password.store.model.UserDetailsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -39,18 +39,19 @@ public class UserDetailsService {
     }
 
 
-    public void savePasswordEntry(SiteDetailVo storageDetails){
+    public void savePasswordEntry(EntryDetailVo storageDetails){
 
         Optional<UserDetailsVo> optionalUserDetailsVo = getUserDetailsFrom(getUserName(),getHashedPassword());
         if(optionalUserDetailsVo.isPresent()){
 
             UserDetailsVo userDetailsVo = optionalUserDetailsVo.get();
-            SiteDetailVo siteDetailVo = new SiteDetailVo();
-            siteDetailVo.setSiteName(storageDetails.getSiteName());
-            siteDetailVo.setUsername(storageDetails.getUsername());
-            siteDetailVo.setPassword(encrypt(storageDetails.getPassword()));
-            siteDetailVo.setSiteUrl(storageDetails.getSiteUrl());
-            userDetailsVo.addPasswordStorageDetail(siteDetailVo);
+            EntryDetailVo entryDetailVo = new EntryDetailVo();
+            entryDetailVo.setSiteName(storageDetails.getSiteName());
+            entryDetailVo.setUsername(storageDetails.getUsername());
+            entryDetailVo.setPassword(encrypt(storageDetails.getPassword()));
+            entryDetailVo.setSiteUrl(storageDetails.getSiteUrl());
+            entryDetailVo.setDescription(storageDetails.getDescription());
+            userDetailsVo.addPasswordStorageDetail(entryDetailVo);
             save(userDetailsVo);
         }else{
             throw new RuntimeException("User does not exists...");
@@ -63,24 +64,25 @@ public class UserDetailsService {
     }
 
 
-    public void updatePasswordEntry(SiteDetailVo storageDetails){
+    public void updatePasswordEntry(EntryDetailVo storageDetails){
 
 
-        SiteDetailVo siteDetailVo = passwordDetailsDao.findOne(storageDetails.getId());
-            siteDetailVo.setSiteName(storageDetails.getSiteName());
-            siteDetailVo.setUsername(storageDetails.getUsername());
-            siteDetailVo.setPassword(encrypt(storageDetails.getPassword()));
-            siteDetailVo.setSiteUrl(storageDetails.getSiteUrl());
-            passwordDetailsDao.save(siteDetailVo);
+        EntryDetailVo entryDetailVo = passwordDetailsDao.findOne(storageDetails.getId());
+            entryDetailVo.setSiteName(storageDetails.getSiteName());
+            entryDetailVo.setUsername(storageDetails.getUsername());
+            entryDetailVo.setPassword(encrypt(storageDetails.getPassword()));
+            entryDetailVo.setSiteUrl(storageDetails.getSiteUrl());
+            entryDetailVo.setDescription(storageDetails.getDescription());
+            passwordDetailsDao.save(entryDetailVo);
     }
 
 
-    public List<SiteDetailVo> getAllEntries() {
+    public List<EntryDetailVo> getAllEntries() {
         Optional<UserDetailsVo> optionalUserDetailsVo = getUserDetailsFrom(getUserName(),getHashedPassword());
         if(optionalUserDetailsVo.isPresent()){
 
             UserDetailsVo userDetailsVo = optionalUserDetailsVo.get();
-            List<SiteDetailVo> siteDetails = userDetailsVo.getSiteDetailList();
+            List<EntryDetailVo> siteDetails = userDetailsVo.getSiteDetailList();
             return siteDetails.stream().map(passwordStorageDetail ->  decrypt(passwordStorageDetail)).collect(Collectors.toList());
 
 
@@ -90,10 +92,10 @@ public class UserDetailsService {
 
     }
 
-    private SiteDetailVo decrypt(SiteDetailVo siteDetailVo) {
-        String encryptedPassword = siteDetailVo.getPassword();
-        siteDetailVo.setPassword(hashCreator.decrypt(encryptedPassword,getPassword(),getUserName()));
-        return siteDetailVo;
+    private EntryDetailVo decrypt(EntryDetailVo entryDetailVo) {
+        String encryptedPassword = entryDetailVo.getPassword();
+        entryDetailVo.setPassword(hashCreator.decrypt(encryptedPassword,getPassword(),getUserName()));
+        return entryDetailVo;
     }
 
     public String getUserName(){

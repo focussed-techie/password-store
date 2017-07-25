@@ -2,7 +2,7 @@ package com.puneet.password.store.controller;
 
 import com.puneet.password.store.hash.HashCreator;
 import com.puneet.password.store.model.ChangePasswordVo;
-import com.puneet.password.store.model.SiteDetailVo;
+import com.puneet.password.store.model.EntryDetailVo;
 import com.puneet.password.store.model.UserDetailsVo;
 import com.puneet.password.store.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +26,20 @@ public class StoredDetailsController {
     private HashCreator hashCreator;
 
     @RequestMapping(value = "/addNewEntry", method = RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody HttpStatus addNewEntry(@RequestBody SiteDetailVo storageEntry){
+    public @ResponseBody HttpStatus addNewEntry(@RequestBody EntryDetailVo storageEntry){
        storageManagementService.savePasswordEntry(storageEntry);
         return HttpStatus.OK;
     }
 
     @RequestMapping(value = "/saveData", method = RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody HttpStatus savePasswordChanges(@RequestBody SiteDetailVo storageEntry){
+    public @ResponseBody HttpStatus savePasswordChanges(@RequestBody EntryDetailVo storageEntry){
 
        storageManagementService.updatePasswordEntry(storageEntry);
         return HttpStatus.OK;
     }
 
     @RequestMapping(value = "/dashboard",method = RequestMethod.GET)
-    public List<SiteDetailVo> getDashobard(){
+    public List<EntryDetailVo> getDashobard(){
         return storageManagementService.getAllEntries();
     }
 
@@ -50,7 +50,7 @@ public class StoredDetailsController {
         if(userDetailsVoOptional.isPresent()){
            UserDetailsVo userDetailsVo = userDetailsVoOptional.get();
            userDetailsVo.setPassword(hashCreator.createHashFrom(changePasswordVo.getNewPassword()));
-           List<SiteDetailVo> siteDetails = userDetailsVo.getSiteDetailList();
+           List<EntryDetailVo> siteDetails = userDetailsVo.getSiteDetailList();
             siteDetails.forEach(passwordStorageDetail -> {
                 passwordStorageDetail.setPassword(hashCreator.encrypt
                        (hashCreator.decrypt(

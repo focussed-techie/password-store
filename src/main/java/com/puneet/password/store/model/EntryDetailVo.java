@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Entity
 
 @Table(name = "PASSWORD_STORAGE_DETAILS")
-public class SiteDetailVo {
+public class EntryDetailVo {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -24,6 +24,9 @@ public class SiteDetailVo {
 
     @Column(name="SITE_URL")
     private String siteUrl;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
 
 
     public Long getId() {
@@ -67,4 +70,11 @@ public class SiteDetailVo {
         this.siteUrl = siteUrl;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

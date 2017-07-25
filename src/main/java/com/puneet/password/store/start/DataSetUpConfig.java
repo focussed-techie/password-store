@@ -1,7 +1,7 @@
 package com.puneet.password.store.start;
 
 import com.puneet.password.store.hash.HashCreator;
-import com.puneet.password.store.model.SiteDetailVo;
+import com.puneet.password.store.model.EntryDetailVo;
 import com.puneet.password.store.model.UserDetailsVo;
 import com.puneet.password.store.service.UserDetailsService;
 import org.springframework.boot.CommandLineRunner;
@@ -20,11 +20,11 @@ public class DataSetUpConfig {
         UserDetailsVo userDetailsVo = new UserDetailsVo();
         userDetailsVo.setUsername("testing");
         userDetailsVo.setPassword(hashCreator.createHashFrom("testing"));
-        SiteDetailVo siteDetailVo = new SiteDetailVo();
-        siteDetailVo.setUsername("test");
-        siteDetailVo.setSiteName("tester");
-        siteDetailVo.setPassword(hashCreator.encrypt("value","testing","testing"));
-        userDetailsVo.addPasswordStorageDetail(siteDetailVo);
+        EntryDetailVo entryDetailVo = new EntryDetailVo();
+        entryDetailVo.setUsername("test");
+        entryDetailVo.setSiteName("tester");
+        entryDetailVo.setPassword(hashCreator.encrypt("value","testing","testing"));
+        userDetailsVo.addPasswordStorageDetail(entryDetailVo);
      //   userDetailsService.save(userDetailsVo);
         };
     }

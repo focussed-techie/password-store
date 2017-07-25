@@ -20,7 +20,7 @@ public class UserDetailsVo {
 
     @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_DETAILS_ID")
-    private List<SiteDetailVo> siteDetailList = new ArrayList<>();
+    private List<EntryDetailVo> siteDetailList = new ArrayList<>();
 
 
 
@@ -48,15 +48,15 @@ public class UserDetailsVo {
         this.password = password;
     }
 
-    public List<SiteDetailVo> getSiteDetailList() {
+    public List<EntryDetailVo> getSiteDetailList() {
         return siteDetailList;
     }
 
-    public void setSiteDetailList(List<SiteDetailVo> siteDetailList) {
+    public void setSiteDetailList(List<EntryDetailVo> siteDetailList) {
         this.siteDetailList = siteDetailList;
     }
 
-    public void addPasswordStorageDetail(SiteDetailVo siteDetailVo){
-        this.siteDetailList.add(siteDetailVo);
+    public void addPasswordStorageDetail(EntryDetailVo entryDetailVo){
+        this.siteDetailList.add(entryDetailVo);
     }
 }

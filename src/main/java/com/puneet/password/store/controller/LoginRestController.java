@@ -30,8 +30,8 @@ public class LoginRestController {
 
         UserDetailsVo userDetailsVo = new UserDetailsVo();
         userDetailsVo.setUsername(userValues.getUsername());
-        String decryptedPassword = hashCreator.decryptFromUi(session.getId(),userValues.getPassword());
-        userDetailsVo.setPassword(hashCreator.createHashFrom(decryptedPassword));
+        //String decryptedPassword = hashCreator.decryptUsingPrivateKey(session.getId(),userValues.getPassword());
+        userDetailsVo.setPassword(hashCreator.createHashFrom(userValues.getPassword()));
         Optional<UserDetailsVo> optionalUser = userDetailsService.getUserDetailsFrom(userDetailsVo.getUsername(),userDetailsVo.getPassword());
         if(optionalUser.isPresent()){
             throw new RuntimeException("User Already exists");

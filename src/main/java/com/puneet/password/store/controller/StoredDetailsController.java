@@ -2,12 +2,14 @@ package com.puneet.password.store.controller;
 
 import com.puneet.password.store.hash.HashCreator;
 import com.puneet.password.store.model.ChangePasswordVo;
+import com.puneet.password.store.model.Keys;
 import com.puneet.password.store.model.SiteDetailVo;
 import com.puneet.password.store.model.UserDetailsVo;
 import com.puneet.password.store.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +31,15 @@ public class StoredDetailsController {
     private HashCreator hashCreator;
 
     @RequestMapping(value = "/addNewEntry", method = RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody HttpStatus addNewEntry(@RequestBody SiteDetailVo storageEntry){
-       storageManagementService.savePasswordEntry(storageEntry);
+    public @ResponseBody HttpStatus addNewEntry(@RequestBody SiteDetailVo storageEntry,HttpSession session){
+       storageEntry.setPassword(hashCreator.decryptUsingSymetricKey(storageEntry.getPassword(),session.getId()));
+        storageManagementService.savePasswordEntry(storageEntry);
         return HttpStatus.OK;
     }
 
     @RequestMapping(value = "/saveData", method = RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody HttpStatus savePasswordChanges(@RequestBody SiteDetailVo storageEntry){
-
+    public @ResponseBody HttpStatus savePasswordChanges(@RequestBody SiteDetailVo storageEntry,HttpSession session){
+        storageEntry.setPassword(hashCreator.decryptUsingSymetricKey(storageEntry.getPassword(),session.getId()));
        storageManagementService.updatePasswordEntry(storageEntry);
         return HttpStatus.OK;
     }
@@ -45,7 +48,7 @@ public class StoredDetailsController {
     public List<SiteDetailVo> getDashobard(HttpSession session){
         List<SiteDetailVo> allSiteDetails = storageManagementService.getAllEntries();
         return allSiteDetails.stream().map(siteDetailVo -> {
-            siteDetailVo.setPassword(hashCreator.encryptForUi(session.getId(),siteDetailVo.getPassword()));
+            siteDetailVo.setPassword(hashCreator.encryptUsingSymetricKey(siteDetailVo.getPassword(),session.getId()));
             return siteDetailVo;
         }).collect(Collectors.toList());
     }
@@ -54,9 +57,9 @@ public class StoredDetailsController {
     public HttpStatus changePassword(@RequestBody ChangePasswordVo changePasswordVo,HttpServletRequest request){
         String username = storageManagementService.getUserName();
         String sessionId = request.getSession().getId();
-        Optional<UserDetailsVo> userDetailsVoOptional  = storageManagementService.getUserDetailsFrom(username,hashCreator.createHashFrom(hashCreator.decryptFromUi(sessionId,changePasswordVo.getCurrentPassword())));
+        Optional<UserDetailsVo> userDetailsVoOptional  = storageManagementService.getUserDetailsFrom(username,hashCreator.createHashFrom(hashCreator.decryptUsingPrivateKey(sessionId,changePasswordVo.getCurrentPassword())));
         if(userDetailsVoOptional.isPresent()){
-            String decryptedPassword = hashCreator.decryptFromUi(sessionId,changePasswordVo.getNewPassword());
+            String decryptedPassword = hashCreator.decryptUsingPrivateKey(sessionId,changePasswordVo.getNewPassword());
 
            UserDetailsVo userDetailsVo = userDetailsVoOptional.get();
            userDetailsVo.setPassword(hashCreator.createHashFrom(decryptedPassword));
@@ -100,6 +103,25 @@ public class StoredDetailsController {
         String sessionId = session.getId();
        return hashCreator.getKeyPair(sessionId);
     }
+
+    @RequestMapping(value = "/saveKeys", method =RequestMethod.POST)
+    public ResponseEntity<?> saveKeys(@RequestBody Keys keys, HttpSession session){
+        try {
+            System.out.println("Keys are " + keys);
+            String convertedSalt = hashCreator.decryptUsingPrivateKey(session.getId(), keys.getSalt());
+            System.out.println("Converted salt");
+            String convertedIv = hashCreator.decryptUsingPrivateKey(session.getId(), keys.getIv());
+            System.out.println("Converted initial vector");
+            String convertedpassPhrase = hashCreator.decryptUsingPrivateKey(session.getId(), keys.getPassPhrase());
+            System.out.println("Converted Passphrase");
+            hashCreator.setKeys(convertedSalt, convertedpassPhrase, convertedIv, session.getId());
+
+            return ResponseEntity.ok("");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 
 
 

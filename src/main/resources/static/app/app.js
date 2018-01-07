@@ -27,9 +27,16 @@
                   controller: 'dashboardController',
                   controllerAs: 'dashboardCtrl',
                   templateUrl: 'app/dashboard/dashboard-partial.html'
-              }
+              },
+              resolve :{
+                  rsaKey : function (rsaService) {
+                     return rsaService.promise;
 
-          }
+                  }
+
+              }
+          },
+
 
       }).state('changePassword',{
           url: '/changePassword',

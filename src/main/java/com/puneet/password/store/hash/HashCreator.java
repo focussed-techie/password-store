@@ -1,22 +1,25 @@
 package com.puneet.password.store.hash;
 
-import com.google.common.collect.ImmutableMap;
+import com.puneet.password.store.model.Keys;
 import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,8 +31,15 @@ public class HashCreator {
 
     public static String initVector= "SaltForEncryption";
     public static String passwordaSalt= "SaltForPassword";
+    public static final int keySize = 128 ;
+    public static final int iterationCount =1000 ;
+
+
 
     private Map<String,KeyPair> mapOfKeys = new HashMap<>();
+    private Map<String,Keys> mapOfSymetricKeys = new HashMap<>();
+
+
 
     public  String createHashFrom(String masterPassword) {
         try {
@@ -116,9 +126,10 @@ public class HashCreator {
 
     }
 
-    public String decryptFromUi(String sessionId, String dataToBeDecrypted){
+    public String decryptUsingPrivateKey(String sessionId, String dataToBeDecrypted){
         KeyPair keyPair = mapOfKeys.get(sessionId);
         Key privateKey = keyPair.getPrivate();
+        System.out.println("public key is "+keyPair.getPublic().toString());
         Cipher cipher;
         BigInteger passwordInt = new BigInteger(dataToBeDecrypted, 16);
         try {
@@ -140,24 +151,104 @@ public class HashCreator {
         }
     }
 
-    public String encryptForUi(String sessionId, String dataToBeEncrypted){
-        KeyPair keyPair = mapOfKeys.get(sessionId);
-        Key privateKey = keyPair.getPrivate();
-        Cipher cipher;
 
+
+
+
+
+
+
+    public String encryptUsingSymetricKey(String plaintext,String sessionId) {
         try {
-            cipher = javax.crypto.Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-            byte[]  encryptedText = cipher.doFinal(dataToBeEncrypted.getBytes());
-            BigInteger passwordAsInt = new BigInteger(encryptedText);
-            System.out.println("encrypted text " + passwordAsInt.toString(16));
-            return passwordAsInt.toString(16);
-        } catch(NoSuchAlgorithmException |NoSuchPaddingException | InvalidKeyException |IllegalBlockSizeException| BadPaddingException e) {
-            throw new RuntimeException(e);
+            Keys keys = mapOfSymetricKeys.get(sessionId);
+            SecretKey key = generateKey(keys.getSalt(), keys.getPassPhrase());
+            byte[] encrypted = doFinal(Cipher.ENCRYPT_MODE, key, keys.getIv(), plaintext.getBytes("UTF-8"));
+            return base64(encrypted);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw fail(e);
         }
     }
 
+    public String decryptUsingSymetricKey(String ciphertext,String sessionId) {
+        try {
+            Keys keys = mapOfSymetricKeys.get(sessionId);
+            SecretKey key = generateKey(keys.getSalt(), keys.getPassPhrase());
+            byte[] decrypted = doFinal(Cipher.DECRYPT_MODE, key, keys.getIv(), base64(ciphertext));
+            return new String(decrypted, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw fail(e);
+        }
+    }
 
+    private byte[] doFinal(int encryptMode, SecretKey key, String iv, byte[] bytes) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(encryptMode, key, new IvParameterSpec(hex(iv)));
+            return cipher.doFinal(bytes);
+        }
+        catch (InvalidKeyException
+                | InvalidAlgorithmParameterException
+                | IllegalBlockSizeException
+                |NoSuchPaddingException
+                |NoSuchAlgorithmException
+                | BadPaddingException e) {
+            throw fail(e);
+        }
+    }
 
+    private SecretKey generateKey(String salt, String passphrase) {
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            KeySpec spec = new PBEKeySpec(passphrase.toCharArray(), hex(salt), iterationCount, keySize);
+            SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
+            return key;
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw fail(e);
+        }
+    }
 
+    public static String random(int length) {
+        byte[] salt = new byte[length];
+        new SecureRandom().nextBytes(salt);
+        return hex(salt);
+    }
+
+    public static String base64(byte[] bytes) {
+        return Base64.encodeBase64String(bytes);
+    }
+
+    public static byte[] base64(String str) {
+        return Base64.decodeBase64(str);
+    }
+
+    public static String hex(byte[] bytes) {
+        return Hex.encodeHexString(bytes);
+    }
+
+    public static byte[] hex(String str) {
+        try {
+            return Hex.decodeHex(str.toCharArray());
+        }
+        catch (DecoderException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private IllegalStateException fail(Exception e) {
+        return new IllegalStateException(e);
+    }
+
+    public void setKeys(String convertedSalt, String convertedpassPhrase, String convertedIv,String sessionId) {
+        Keys keys = new Keys(convertedIv,convertedSalt,convertedpassPhrase);
+        mapOfSymetricKeys.put(sessionId,keys);
+
+    }
+    public void removeKeys(String sessionId){
+        mapOfSymetricKeys.remove(sessionId);
+        mapOfKeys.remove(sessionId);
+
+    }
 }

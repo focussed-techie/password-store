@@ -1,5 +1,5 @@
 (function(){
-    var passwordApp = angular.module("passwordLoginApp",['ui.router','loginModule','signUpModule','alertModule','rsaModule','ui.validate','ui.bootstrap']);
+    var passwordApp = angular.module("passwordLoginApp",['ui.router','loginModule','signUpModule','alertModule','ui.validate','ui.bootstrap']);
 
     passwordApp.config(configuration);
     configuration.$inject = ['$stateProvider','$urlRouterProvider'];
@@ -45,7 +45,8 @@
 
             }
 
-        });
+
+            });
 
     }
 

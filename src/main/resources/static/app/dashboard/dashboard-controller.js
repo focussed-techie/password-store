@@ -14,7 +14,7 @@
         ctrl.copyToClipboard=copyToClipBoard;
         ctrl.addnewEntry=addnewEntry;
         ctrl.saveNewEntry=saveNewEntry;
-
+        ctrl.decryptData =decryptData;
         function getDashboardData(){
             $http.get('/dashboard').then(display);
         }
@@ -33,9 +33,8 @@
         }
 
         function saveNewEntry(index){
-           var userObject =  ctrl.storage[index]
-
-
+           var userObject =  ctrl.storage[index];
+           userObject.password = rsaService.encryptData(userObject.password);
             $http.post('/addNewEntry',userObject)
                 .then(successful).catch(error);
         }
@@ -55,11 +54,15 @@
             ctrl.storage = response.data;
             ctrl.storage.forEach(function (thisValue){
                 thisValue.isEditable = false; thisValue.showPassword =false;
-                thisValue.passwordDisplayValue = rsaService.decryptData(thisValue.password);
+          //     thisValue.passwordDisplayValue = rsaService.decryptData(thisValue.password);
             });
             ctrl.prestineStorage = angular.copy(ctrl.storage);
 
 
+        }
+
+        function decryptData(data){
+            return rsaService.decryptData(data);
         }
 
         function copyToClipBoard(index,event){

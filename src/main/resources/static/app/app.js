@@ -29,8 +29,10 @@
                   templateUrl: 'app/dashboard/dashboard-partial.html'
               },
               resolve :{
-                  rsaKey : function (rsaService) {
-                     return rsaService.promise;
+                  data : function (rsaService,$q) {
+                      var promise =  $q.defer();
+                      rsaService.populateKeys().then(promise.resolve(''));
+                      return promise.promise;
 
                   }
 

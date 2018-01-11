@@ -106,7 +106,6 @@ public class HashCreator {
 
         try {
 
-
             KeyPair keyPair = mapOfKeys.get(sessionId);
             if(keyPair == null) {
                 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -137,7 +136,12 @@ public class HashCreator {
             byte[] passwordBytes  = new byte[256];
 
             if (passwordInt.toByteArray().length > 256) {
-                passwordBytes = ArrayUtils.subarray(passwordBytes,1,257);
+                byte[] toByteArray = passwordInt.toByteArray();
+                for (int i=1; i<257; i++) {
+                    passwordBytes[i-1] = toByteArray[i];
+        //            passwordBytes[i-1] = passwordInt.toByteArray()[i];
+                }
+               passwordBytes = ArrayUtils.subarray(toByteArray,1,toByteArray.length);
             } else {
                 passwordBytes = passwordInt.toByteArray();
             }

@@ -22,8 +22,8 @@
 
         function signup(){
 
-            var encryptedPassword = rsaService.encryptData(ctrl.newPassword);
-            var encryptedOldPassword = rsaService.encryptData(ctrl.currentPassword);
+            var encryptedPassword = rsaService.encryptWithPublicKeyData(ctrl.newPassword);
+            var encryptedOldPassword = rsaService.encryptWithPublicKeyData(ctrl.currentPassword);
             var userObject = {'currentPassword' : encryptedOldPassword, 'newPassword' : encryptedPassword};
 
             $http.post('/changePassword',userObject)

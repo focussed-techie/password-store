@@ -9,25 +9,27 @@
         var service =this;
         service.rsa=new RSAKey();
         service.publicKey;
-        service.deferred  = $q.defer();
+        service.deferred ;
 
         service.iterationCount = 1000;
         service.keySize = 128 / 32;
-        service.iv = CryptoJS.lib.WordArray.random(8).toString(CryptoJS.enc.Hex);
+        service.iv = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex);
         service.salt = CryptoJS.lib.WordArray.random(8).toString(CryptoJS.enc.Hex);
-        service.passPhrase = CryptoJS.lib.WordArray.random(8).toString(CryptoJS.enc.Hex);
+        service.passPhrase = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex);
         console.log("salt :",service.salt);
         console.log("passphrase :",service.passPhrase);
 
         console.log("iv :",service.iv);
 
-        getKeyModulus();
+
 
         return{
-            promise : service.deferred.promise,
             'encryptWithPublicKeyData' : encryptWithPublicKeyData,
             'encryptData' : encryptData,
-            'decryptData' : decryptData
+            'decryptData' : decryptData,
+            'sendKeys' : sendKeys,
+            'getKeyModulus' : getKeyModulus,
+            'populateKeys' : populateKeys
 
         };
 
@@ -36,16 +38,19 @@
 
         }
 
+        function populateKeys(){
+          return getKeyModulus().then(sendKeys);
+        }
+
 
         function getKeyModulus(){
-            $http.get("/publicKey").then(function(response){
-                service.publicKey=response.data;
-                console.log("public key is :",service.publicKey);
-                service.rsa.setPublic(service.publicKey, '10001');
-                sendKeys();
-            },function (response) {
 
+           return $http.get("/publicKey").then(function(response){
+                service.publicKey=response.data;
+                service.rsa.setPublic(service.publicKey, '10001');
+                console.log("public key is :",service.publicKey);
             });
+
         }
 
        function decryptData(data){
@@ -96,20 +101,17 @@
         }
 
         function sendKeys(){
+            console.log("In method");
             var salt = encryptWithPublicKeyData(service.salt);
             var passPhrase = encryptWithPublicKeyData(service.passPhrase);
             var iv = encryptWithPublicKeyData(service.iv);
+
             var keys = {'salt' : salt,
                 'passPhrase' : passPhrase,
                 'iv' : iv
             };
 
-            $http.post("/saveKeys",keys).then(function(response){
-                service.deferred.resolve(response);
-            },function (res) {
-                alertService.addAlert(res.data);
-                service.deferred.reject(res);
-            });
+           return $http.post("/saveKeys",keys);
         }
 
 

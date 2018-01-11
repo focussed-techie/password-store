@@ -2,10 +2,13 @@ package com.puneet.password.store.service;
 
 
 import com.puneet.password.store.dao.PasswordDetailsDao;
+import com.puneet.password.store.dao.SaltAssociationDao;
 import com.puneet.password.store.dao.UserDetailsDao;
 import com.puneet.password.store.hash.HashCreator;
+import com.puneet.password.store.model.SaltAssocation;
 import com.puneet.password.store.model.SiteDetailVo;
 import com.puneet.password.store.model.UserDetailsVo;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +30,9 @@ public class UserDetailsService {
 
     @Autowired
     private HashCreator hashCreator;
+
+    @Autowired
+    private SaltAssociationDao saltAssociationDao;
 
 
     public Optional<UserDetailsVo> getUserDetailsFrom(String userName, String hashedPassword){
@@ -59,7 +65,16 @@ public class UserDetailsService {
     }
 
     private String encrypt(String password) {
-        return hashCreator.encrypt(password,getPassword(),getUserName());
+
+       Pair<String,String> pairOfDecryptedSalt = getDecryptedValues();
+        return hashCreator.encrypt(password,pairOfDecryptedSalt.getLeft(),pairOfDecryptedSalt.getRight());
+    }
+
+    private Pair<String, String> getDecryptedValues() {
+        SaltAssocation saltAssocation = saltAssociationDao.findByUserName(userDetailsDao.findByUsername(getUserName()));
+        String decryptedSalt = hashCreator.decrypt(saltAssocation.getSalt(), getPassword(), getUserName());
+        String decryptedInitVector = hashCreator.decrypt(saltAssocation.getInitVector(),getPassword(),getUserName());
+        return Pair.of(decryptedSalt,decryptedInitVector);
     }
 
 
@@ -92,7 +107,8 @@ public class UserDetailsService {
 
     private SiteDetailVo decrypt(SiteDetailVo siteDetailVo) {
         String encryptedPassword = siteDetailVo.getPassword();
-        siteDetailVo.setPassword(hashCreator.decrypt(encryptedPassword,getPassword(),getUserName()));
+        Pair<String,String> pairOfDecryptedSalt = getDecryptedValues();
+        siteDetailVo.setPassword(hashCreator.decrypt(encryptedPassword,pairOfDecryptedSalt.getLeft(),pairOfDecryptedSalt.getRight()));
         return siteDetailVo;
     }
 

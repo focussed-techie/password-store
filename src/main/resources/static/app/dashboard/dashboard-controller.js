@@ -7,7 +7,6 @@
         ctrl.storage=[];
         ctrl.passwordDisplay = false;
 
-        ctrl.storage = getDashboardData();
         ctrl.edit=edit;
         ctrl.save=save;
         ctrl.cancel=cancel;
@@ -15,9 +14,8 @@
         ctrl.addnewEntry=addnewEntry;
         ctrl.saveNewEntry=saveNewEntry;
         ctrl.decryptData =decryptData;
-        function getDashboardData(){
-            $http.get('/dashboard').then(display);
-        }
+
+
 
         function addnewEntry(){
            var newStorageObj = {
@@ -90,8 +88,16 @@
             ctrl.storage[index].isEditable = false;
             ctrl.storage[index].showPassword = false;
         }
+        function getDashboardData(){
+
+            $http.get('/dashboard').then(display);
+        }
+
+        rsaService.populateKeys().then(getDashboardData);
+       // getDashboardData();
 
     }
+
 
 
 })();

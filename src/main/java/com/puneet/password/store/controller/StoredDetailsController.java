@@ -1,10 +1,8 @@
 package com.puneet.password.store.controller;
 
+import com.puneet.password.store.dao.SaltAssociationDao;
 import com.puneet.password.store.hash.HashCreator;
-import com.puneet.password.store.model.ChangePasswordVo;
-import com.puneet.password.store.model.Keys;
-import com.puneet.password.store.model.SiteDetailVo;
-import com.puneet.password.store.model.UserDetailsVo;
+import com.puneet.password.store.model.*;
 import com.puneet.password.store.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,9 @@ public class StoredDetailsController {
 
     @Autowired
     private HashCreator hashCreator;
+
+    @Autowired
+    private SaltAssociationDao saltAssociationDao;
 
     @RequestMapping(value = "/addNewEntry", method = RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody HttpStatus addNewEntry(@RequestBody SiteDetailVo storageEntry,HttpSession session){
@@ -57,21 +58,20 @@ public class StoredDetailsController {
     public HttpStatus changePassword(@RequestBody ChangePasswordVo changePasswordVo,HttpServletRequest request){
         String username = storageManagementService.getUserName();
         String sessionId = request.getSession().getId();
-        Optional<UserDetailsVo> userDetailsVoOptional  = storageManagementService.getUserDetailsFrom(username,hashCreator.createHashFrom(hashCreator.decryptUsingPrivateKey(sessionId,changePasswordVo.getCurrentPassword())));
+        String oldPassword = hashCreator.decryptUsingPrivateKey(sessionId, changePasswordVo.getCurrentPassword());
+        Optional<UserDetailsVo> userDetailsVoOptional  = storageManagementService.getUserDetailsFrom(username,
+                hashCreator.createHashFrom(oldPassword));
         if(userDetailsVoOptional.isPresent()){
             String decryptedPassword = hashCreator.decryptUsingPrivateKey(sessionId,changePasswordVo.getNewPassword());
 
            UserDetailsVo userDetailsVo = userDetailsVoOptional.get();
            userDetailsVo.setPassword(hashCreator.createHashFrom(decryptedPassword));
-           List<SiteDetailVo> siteDetails = userDetailsVo.getSiteDetailList();
-            siteDetails.forEach(passwordStorageDetail -> {
-                passwordStorageDetail.setPassword(hashCreator.encrypt
-                       (hashCreator.decrypt(
-                               passwordStorageDetail.getPassword(),
-                               changePasswordVo.getCurrentPassword(),
-                               username),decryptedPassword,username));
-            });
-            storageManagementService.save(userDetailsVo);
+
+           SaltAssocation saltAssocation = saltAssociationDao.findByUserName(userDetailsVo);
+           saltAssocation.setSalt(hashCreator.encrypt(hashCreator.decrypt(saltAssocation.getSalt(),oldPassword,username),decryptedPassword,username));
+           saltAssocation.setInitVector(hashCreator.encrypt(hashCreator.decrypt(saltAssocation.getInitVector(),oldPassword,username),decryptedPassword,username));
+            saltAssociationDao.save(saltAssocation);
+           storageManagementService.save(userDetailsVo);
 
            logUserOut(request);
             logoutUserOtherWay();
@@ -118,6 +118,7 @@ public class StoredDetailsController {
 
             return ResponseEntity.ok("");
         }catch (Exception e){
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

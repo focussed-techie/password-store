@@ -2,7 +2,7 @@ package com.puneet.password.store.config;
 
 import com.puneet.password.store.hash.HashCreator;
 import com.puneet.password.store.model.UserDetailsVo;
-import com.puneet.password.store.service.UserDetailsService;
+import com.puneet.password.store.service.VaultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class PasswordStoreAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private VaultService vaultService;
 
     @Autowired
     private HashCreator hashCreator;
@@ -34,7 +34,7 @@ public class PasswordStoreAuthenticationProvider extends AbstractUserDetailsAuth
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        Optional<UserDetailsVo> userDetailsOptional = userDetailsService.getUserDetailsFrom(authentication.getName(),hashCreator.createHashFrom(authentication.getCredentials().toString()));
+        Optional<UserDetailsVo> userDetailsOptional = vaultService.getUserDetailsFrom(authentication.getName(),hashCreator.createHashFrom(authentication.getCredentials().toString()));
         if(userDetailsOptional.isPresent()) {
             Collection<GrantedAuthority> grantedAuthorityCollection = new ArrayList<>();
             grantedAuthorityCollection.add(() -> "ROLE_USER");

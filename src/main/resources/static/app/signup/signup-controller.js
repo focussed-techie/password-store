@@ -2,7 +2,7 @@
     var singupModule = angular.module("signUpModule");
     singupModule.controller("signUpController",signUpController);
 
-    function signUpController($scope,$http,$location,alertService){
+    function signUpController($scope,$http,$location,alertService,rsaService){
         var ctrl = this;
         ctrl.username = '';
         ctrl.password = '';
@@ -27,8 +27,8 @@
 
 
         function signup(){
-        //    var encodedPassword = rsaService.encryptWithPublicKeyData(ctrl.password);
-            var userObject = {'username' : ctrl.username, 'password' : ctrl.password};
+            var encodedPassword = rsaService.encryptWithPublicKeyData(ctrl.password);
+            var userObject = {'username' : ctrl.username, 'password' : encodedPassword};
 
             $http.post('/signup',userObject)
                 .then(function (response)

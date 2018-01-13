@@ -42,7 +42,7 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                     .loginPage("/login").permitAll()
-                .and().logout().addLogoutHandler((request, response, authentication) -> hashCreator.removeKeys(request.getSession().getId())).invalidateHttpSession(true).permitAll()
+                .and().logout().logoutUrl("/logout").addLogoutHandler((request, response, authentication) -> hashCreator.removeKeys(request.getSession().getId())).invalidateHttpSession(true).permitAll()
                 .permitAll();
                /* .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).invalidateHttpSession(true).permitAll();*/

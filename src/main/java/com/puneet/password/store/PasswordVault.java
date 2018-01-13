@@ -6,11 +6,11 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 
 @SpringBootApplication
-public class PasswordStore extends SpringBootServletInitializer {
+public class PasswordVault extends SpringBootServletInitializer {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(PasswordStore.class,args);
+        SpringApplication.run(PasswordVault.class,args);
     }
 
 

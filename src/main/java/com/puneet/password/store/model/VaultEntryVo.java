@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Entity
 
 @Table(name = "PASSWORD_STORAGE_DETAILS")
-public class SiteDetailVo {
+public class VaultEntryVo {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

@@ -1,8 +1,5 @@
-package com.puneet.password.store.controller;
+package com.puneet.password.store.model;
 
-/**
- * Created by puneet on 17/05/17.
- */
 public class UserValues {
 
     private  String username;

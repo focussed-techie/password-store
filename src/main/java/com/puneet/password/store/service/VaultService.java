@@ -1,12 +1,12 @@
 package com.puneet.password.store.service;
 
 
-import com.puneet.password.store.dao.PasswordDetailsDao;
-import com.puneet.password.store.dao.SaltAssociationDao;
+import com.puneet.password.store.dao.VaultEntryDao;
+import com.puneet.password.store.dao.UserEncryptionKeysDao;
 import com.puneet.password.store.dao.UserDetailsDao;
 import com.puneet.password.store.hash.HashCreator;
-import com.puneet.password.store.model.SaltAssocation;
-import com.puneet.password.store.model.SiteDetailVo;
+import com.puneet.password.store.model.UserEncryptionKeys;
+import com.puneet.password.store.model.VaultEntryVo;
 import com.puneet.password.store.model.UserDetailsVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +19,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserDetailsService {
+public class VaultService {
 
 
     @Autowired
     private UserDetailsDao userDetailsDao;
 
     @Autowired
-    private PasswordDetailsDao passwordDetailsDao;
+    private VaultEntryDao vaultEntryDao;
 
     @Autowired
     private HashCreator hashCreator;
 
     @Autowired
-    private SaltAssociationDao saltAssociationDao;
+    private UserEncryptionKeysDao userEncryptionKeysDao;
 
 
     public Optional<UserDetailsVo> getUserDetailsFrom(String userName, String hashedPassword){
@@ -45,18 +45,18 @@ public class UserDetailsService {
     }
 
 
-    public void savePasswordEntry(SiteDetailVo storageDetails){
+    public void savePasswordEntry(VaultEntryVo storageDetails){
 
         Optional<UserDetailsVo> optionalUserDetailsVo = getUserDetailsFrom(getUserName(),getHashedPassword());
         if(optionalUserDetailsVo.isPresent()){
 
             UserDetailsVo userDetailsVo = optionalUserDetailsVo.get();
-            SiteDetailVo siteDetailVo = new SiteDetailVo();
-            siteDetailVo.setSiteName(storageDetails.getSiteName());
-            siteDetailVo.setUsername(storageDetails.getUsername());
-            siteDetailVo.setPassword(encrypt(storageDetails.getPassword()));
-            siteDetailVo.setSiteUrl(storageDetails.getSiteUrl());
-            userDetailsVo.addPasswordStorageDetail(siteDetailVo);
+            VaultEntryVo vaultEntryVo = new VaultEntryVo();
+            vaultEntryVo.setSiteName(storageDetails.getSiteName());
+            vaultEntryVo.setUsername(storageDetails.getUsername());
+            vaultEntryVo.setPassword(encrypt(storageDetails.getPassword()));
+            vaultEntryVo.setSiteUrl(storageDetails.getSiteUrl());
+            userDetailsVo.addPasswordStorageDetail(vaultEntryVo);
             save(userDetailsVo);
         }else{
             throw new RuntimeException("User does not exists...");
@@ -71,31 +71,31 @@ public class UserDetailsService {
     }
 
     private Pair<String, String> getDecryptedValues() {
-        SaltAssocation saltAssocation = saltAssociationDao.findByUserName(userDetailsDao.findByUsername(getUserName()));
-        String decryptedSalt = hashCreator.decrypt(saltAssocation.getSalt(), getPassword(), getUserName());
-        String decryptedInitVector = hashCreator.decrypt(saltAssocation.getInitVector(),getPassword(),getUserName());
+        UserEncryptionKeys userEncryptionKeys = userEncryptionKeysDao.findByUserName(userDetailsDao.findByUsername(getUserName()));
+        String decryptedSalt = hashCreator.decrypt(userEncryptionKeys.getSalt(), getPassword(), getUserName());
+        String decryptedInitVector = hashCreator.decrypt(userEncryptionKeys.getInitVector(),getPassword(),getUserName());
         return Pair.of(decryptedSalt,decryptedInitVector);
     }
 
 
-    public void updatePasswordEntry(SiteDetailVo storageDetails){
+    public void updatePasswordEntry(VaultEntryVo storageDetails){
 
 
-        SiteDetailVo siteDetailVo = passwordDetailsDao.findOne(storageDetails.getId());
-            siteDetailVo.setSiteName(storageDetails.getSiteName());
-            siteDetailVo.setUsername(storageDetails.getUsername());
-            siteDetailVo.setPassword(encrypt(storageDetails.getPassword()));
-            siteDetailVo.setSiteUrl(storageDetails.getSiteUrl());
-            passwordDetailsDao.save(siteDetailVo);
+        VaultEntryVo vaultEntryVo = vaultEntryDao.findOne(storageDetails.getId());
+            vaultEntryVo.setSiteName(storageDetails.getSiteName());
+            vaultEntryVo.setUsername(storageDetails.getUsername());
+            vaultEntryVo.setPassword(encrypt(storageDetails.getPassword()));
+            vaultEntryVo.setSiteUrl(storageDetails.getSiteUrl());
+            vaultEntryDao.save(vaultEntryVo);
     }
 
 
-    public List<SiteDetailVo> getAllEntries() {
+    public List<VaultEntryVo> getAllEntries() {
         Optional<UserDetailsVo> optionalUserDetailsVo = getUserDetailsFrom(getUserName(),getHashedPassword());
         if(optionalUserDetailsVo.isPresent()){
 
             UserDetailsVo userDetailsVo = optionalUserDetailsVo.get();
-            List<SiteDetailVo> siteDetails = userDetailsVo.getSiteDetailList();
+            List<VaultEntryVo> siteDetails = userDetailsVo.getSiteDetailList();
             return siteDetails.stream().map(passwordStorageDetail ->  decrypt(passwordStorageDetail)).collect(Collectors.toList());
 
 
@@ -105,11 +105,11 @@ public class UserDetailsService {
 
     }
 
-    private SiteDetailVo decrypt(SiteDetailVo siteDetailVo) {
-        String encryptedPassword = siteDetailVo.getPassword();
+    private VaultEntryVo decrypt(VaultEntryVo vaultEntryVo) {
+        String encryptedPassword = vaultEntryVo.getPassword();
         Pair<String,String> pairOfDecryptedSalt = getDecryptedValues();
-        siteDetailVo.setPassword(hashCreator.decrypt(encryptedPassword,pairOfDecryptedSalt.getLeft(),pairOfDecryptedSalt.getRight()));
-        return siteDetailVo;
+        vaultEntryVo.setPassword(hashCreator.decrypt(encryptedPassword,pairOfDecryptedSalt.getLeft(),pairOfDecryptedSalt.getRight()));
+        return vaultEntryVo;
     }
 
     public String getUserName(){

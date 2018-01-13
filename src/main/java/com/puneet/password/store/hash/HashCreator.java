@@ -108,9 +108,7 @@ public class HashCreator {
 
             KeyPair keyPair = mapOfKeys.get(sessionId);
             if(keyPair == null) {
-                KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-                keyPairGenerator.initialize(2048);
-                keyPair = keyPairGenerator.generateKeyPair();
+                keyPair = generateKeyPair();
             }
             PublicKey publicKey = keyPair.getPublic();
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -123,6 +121,13 @@ public class HashCreator {
 
         }
 
+    }
+
+    private KeyPair generateKeyPair() throws NoSuchAlgorithmException {
+        KeyPair keyPair;KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048);
+        keyPair = keyPairGenerator.generateKeyPair();
+        return keyPair;
     }
 
     public String decryptUsingPrivateKey(String sessionId, String dataToBeDecrypted){

@@ -4,8 +4,8 @@ package com.puneet.password.store.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USER_SALT_DETAILS")
-public class SaltAssocation {
+@Table(name = "USER_ENCRYPTION_KEYS")
+public class UserEncryptionKeys {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

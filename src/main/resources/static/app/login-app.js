@@ -1,5 +1,5 @@
 (function(){
-    var passwordApp = angular.module("passwordLoginApp",['ui.router','loginModule','signUpModule','alertModule','ui.validate','ui.bootstrap']);
+    var passwordApp = angular.module("passwordLoginApp",['ui.router','loginModule','signUpModule','alertModule','rsaModule','ui.validate','ui.bootstrap']);
 
     passwordApp.config(configuration);
     configuration.$inject = ['$stateProvider','$urlRouterProvider'];
@@ -26,6 +26,11 @@
                         controller:'loginController',
                         templateUrl :'app/login/login-partial.html'
                     },
+
+            },resolve :{
+                publicKey :  function (rsaService) {
+                    rsaService.getKeyModulus();
+                }
             }
 
 
@@ -43,6 +48,11 @@
 
                 },
 
+
+            }, resolve :{
+                publicKey :  function (rsaService) {
+                    rsaService.getKeyModulus();
+                }
             }
 
 

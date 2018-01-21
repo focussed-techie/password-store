@@ -59,13 +59,13 @@ public class VaultController {
     @RequestMapping(value = "/saveKeys", method =RequestMethod.POST)
     public ResponseEntity<?> saveKeys(@RequestBody Keys keys, HttpSession session){
         try {
-            System.out.println("Keys are " + keys);
+          //  System.out.println("Keys are " + keys);
             String convertedSalt = hashCreator.decryptUsingPrivateKey(session.getId(), keys.getSalt());
-            System.out.println("Converted salt");
+           // System.out.println("Converted salt");
             String convertedIv = hashCreator.decryptUsingPrivateKey(session.getId(), keys.getIv());
-            System.out.println("Converted initial vector");
+          //  System.out.println("Converted initial vector");
             String convertedpassPhrase = hashCreator.decryptUsingPrivateKey(session.getId(), keys.getPassPhrase());
-            System.out.println("Converted Passphrase");
+          //  System.out.println("Converted Passphrase");
             hashCreator.setKeys(convertedSalt, convertedpassPhrase, convertedIv, session.getId());
 
             return ResponseEntity.ok("");

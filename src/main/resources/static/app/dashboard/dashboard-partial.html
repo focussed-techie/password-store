@@ -44,7 +44,7 @@
                 <input type="password" ng-show="userdata.isEditable" ng-model="userdata.password"/>
                 <input type="checkbox" id="checkbox" ng-model="userdata.showPassword"  ng-if="userdata.isEditable"/>
                 <label for="checkbox" ng-if="userdata.isEditable">Show password :</label>
-                <span ng-show="userdata.isEditable && userdata.showPassword">{{dashboardCtrl.decryptData(userdata.password)}}</span>
+                <span ng-show="userdata.isEditable && userdata.showPassword"><input type="text" readonly ng-value="dashboardCtrl.getPasswordValue(userdata,$index)"></span>
             </td>
 
             <td class="col-md-4" ng-if="userdata.id == ''" >

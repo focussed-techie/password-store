@@ -39,7 +39,8 @@ public class LoginController {
 
         UserDetailsVo userDetailsVo = new UserDetailsVo();
         userDetailsVo.setUsername(userValues.getUsername());
-        userDetailsVo.setPassword(hashCreator.createHashFrom(hashCreator.decryptUsingPrivateKey(session.getId(),userValues.getPassword())));
+        String masterPassword = hashCreator.decryptUsingPrivateKey(session.getId(), userValues.getPassword());
+        userDetailsVo.setPassword(hashCreator.createHashFrom(masterPassword));
         Optional<UserDetailsVo> optionalUser = vaultService.getUserDetailsFrom(userDetailsVo.getUsername(),userDetailsVo.getPassword());
         if(optionalUser.isPresent()){
             throw new RuntimeException("User Already exists");
@@ -49,8 +50,8 @@ public class LoginController {
         String salt = generateKey();
         String initVector = generateKey();
         UserEncryptionKeys userEncryptionKeys = new UserEncryptionKeys();
-        userEncryptionKeys.setSalt(hashCreator.encrypt(salt,userValues.getPassword(),userDetailsVo.getUsername()));
-        userEncryptionKeys.setInitVector(hashCreator.encrypt(initVector,userValues.getPassword(),userDetailsVo.getUsername()));
+        userEncryptionKeys.setSalt(hashCreator.encrypt(salt,masterPassword,userDetailsVo.getUsername()));
+        userEncryptionKeys.setInitVector(hashCreator.encrypt(initVector,masterPassword,userDetailsVo.getUsername()));
         userEncryptionKeys.setUserName(userDetailsVo);
         encryptionKeysDao.save(userEncryptionKeys);
         return HttpStatus.OK.toString();

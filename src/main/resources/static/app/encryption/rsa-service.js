@@ -16,10 +16,10 @@
         service.iv = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex);
         service.salt = CryptoJS.lib.WordArray.random(8).toString(CryptoJS.enc.Hex);
         service.passPhrase = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex);
-        console.log("salt :",service.salt);
-        console.log("passphrase :",service.passPhrase);
+      //  console.log("salt :",service.salt);
+      //  console.log("passphrase :",service.passPhrase);
 
-        console.log("iv :",service.iv);
+     //   console.log("iv :",service.iv);
 
 
 
@@ -48,7 +48,7 @@
            return $http.get("/publicKey").then(function(response){
                 service.publicKey=response.data;
                 service.rsa.setPublic(service.publicKey, '10001');
-                console.log("public key is :",service.publicKey);
+         //       console.log("public key is :",service.publicKey);
             });
 
         }

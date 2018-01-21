@@ -133,7 +133,7 @@ public class HashCreator {
     public String decryptUsingPrivateKey(String sessionId, String dataToBeDecrypted){
         KeyPair keyPair = mapOfKeys.get(sessionId);
         Key privateKey = keyPair.getPrivate();
-        System.out.println("public key is "+keyPair.getPublic().toString());
+      //  System.out.println("public key is "+keyPair.getPublic().toString());
         Cipher cipher;
         BigInteger passwordInt = new BigInteger(dataToBeDecrypted, 16);
         try {
@@ -153,7 +153,7 @@ public class HashCreator {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[]  dectyptedText = cipher.doFinal(passwordBytes);
             String passwordNew = new String(dectyptedText);
-            System.out.println("Password new " + passwordNew);
+        //    System.out.println("Password new " + passwordNew);
             return passwordNew;
         } catch(NoSuchAlgorithmException |NoSuchPaddingException | InvalidKeyException |IllegalBlockSizeException| BadPaddingException e) {
             throw new RuntimeException(e);

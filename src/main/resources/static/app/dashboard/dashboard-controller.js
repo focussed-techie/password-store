@@ -14,6 +14,7 @@
         ctrl.addnewEntry=addnewEntry;
         ctrl.saveNewEntry=saveNewEntry;
         ctrl.decryptData =decryptData;
+        ctrl.getPasswordValue =getPasswordValue;
 
 
 
@@ -80,6 +81,7 @@
 
         function save(index){
             var changedValue = ctrl.storage[index];
+            changedValue.password = rsaService.encryptData(changedValue.password);
             $http.post("/saveData",changedValue).then(successful).catch(error);
 
         }
@@ -93,8 +95,18 @@
             $http.get('/dashboard').then(display);
         }
 
+
+        function getPasswordValue(userdata,index){
+            if(ctrl.prestineStorage[index].password === userdata.password){
+                return ctrl.decryptData(userdata.password);
+            }else {
+                return userdata.password;
+            }
+        }
+
+
         rsaService.populateKeys().then(getDashboardData);
-       // getDashboardData();
+
 
     }
 

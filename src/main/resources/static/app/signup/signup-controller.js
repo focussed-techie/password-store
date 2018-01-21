@@ -16,7 +16,7 @@
         $scope.doesUserExist=doesUserExist;
 
         function doesUserExist(value){
-          console.log("calling service to verify");
+        //  console.log("calling service to verify");
            return $http.get("/usernameexists/"+value);
 
         }

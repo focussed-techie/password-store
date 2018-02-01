@@ -7,6 +7,7 @@ import com.puneet.password.store.model.ChangePasswordVo;
 import com.puneet.password.store.model.UserEncryptionKeys;
 import com.puneet.password.store.model.UserDetailsVo;
 import com.puneet.password.store.model.UserValues;
+import com.puneet.password.store.service.UserDetailsService;
 import com.puneet.password.store.service.VaultService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class LoginController {
     @Autowired
     private UserEncryptionKeysDao encryptionKeysDao;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
 
     @Transactional
     @RequestMapping(value = "/signup" ,consumes = MediaType.APPLICATION_JSON_VALUE )
@@ -41,12 +45,12 @@ public class LoginController {
         userDetailsVo.setUsername(userValues.getUsername());
         String masterPassword = hashCreator.decryptUsingPrivateKey(session.getId(), userValues.getPassword());
         userDetailsVo.setPassword(hashCreator.createHashFrom(masterPassword));
-        Optional<UserDetailsVo> optionalUser = vaultService.getUserDetailsFrom(userDetailsVo.getUsername(),userDetailsVo.getPassword());
+        Optional<UserDetailsVo> optionalUser = userDetailsService.getUserDetailsFrom(userDetailsVo.getUsername(),userDetailsVo.getPassword());
         if(optionalUser.isPresent()){
             throw new RuntimeException("User Already exists");
         }
 
-       vaultService.save(userDetailsVo);
+        userDetailsService.save(userDetailsVo);
         String salt = generateKey();
         String initVector = generateKey();
         UserEncryptionKeys userEncryptionKeys = new UserEncryptionKeys();
@@ -63,7 +67,7 @@ public class LoginController {
 
     @RequestMapping(value = "/usernameexists/{username}", method = RequestMethod.GET)
     public @ResponseBody boolean doesUserExist(@PathVariable ("username") String username){
-      Optional<UserDetailsVo> voOptional =   vaultService.findUserByUserName(username);
+      Optional<UserDetailsVo> voOptional =   userDetailsService.findUserByUserName(username);
       if(voOptional.isPresent()){
             throw new RuntimeException("User already exists");
         }
@@ -77,10 +81,10 @@ public class LoginController {
 
     @RequestMapping(value = "/changePassword",method = RequestMethod.POST)
     public HttpStatus changePassword(@RequestBody ChangePasswordVo changePasswordVo, HttpServletRequest request){
-        String username = vaultService.getUserName();
+        String username = userDetailsService.getUserName();
         String sessionId = request.getSession().getId();
         String oldPassword = hashCreator.decryptUsingPrivateKey(sessionId, changePasswordVo.getCurrentPassword());
-        Optional<UserDetailsVo> userDetailsVoOptional  = vaultService.getUserDetailsFrom(username, hashCreator.createHashFrom(oldPassword));
+        Optional<UserDetailsVo> userDetailsVoOptional  = userDetailsService.getUserDetailsFrom(username, hashCreator.createHashFrom(oldPassword));
         if(userDetailsVoOptional.isPresent()){
             String newPassword = hashCreator.decryptUsingPrivateKey(sessionId,changePasswordVo.getNewPassword());
 
@@ -91,7 +95,7 @@ public class LoginController {
             userEncryptionKeys.setSalt(hashCreator.encrypt(hashCreator.decrypt(userEncryptionKeys.getSalt(),oldPassword,username),newPassword,username));
             userEncryptionKeys.setInitVector(hashCreator.encrypt(hashCreator.decrypt(userEncryptionKeys.getInitVector(),oldPassword,username),newPassword,username));
             encryptionKeysDao.save(userEncryptionKeys);
-            vaultService.save(userDetailsVo);
+            userDetailsService.save(userDetailsVo);
             logUserOut(request);
             return HttpStatus.OK;
 

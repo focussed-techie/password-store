@@ -18,10 +18,6 @@ public class UserDetailsVo {
     @Column(name="PASSWORD")
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_DETAILS_ID")
-    private List<VaultEntryVo> siteDetailList = new ArrayList<>();
-
 
 
     public Long getId() {
@@ -48,15 +44,6 @@ public class UserDetailsVo {
         this.password = password;
     }
 
-    public List<VaultEntryVo> getSiteDetailList() {
-        return siteDetailList;
-    }
 
-    public void setSiteDetailList(List<VaultEntryVo> siteDetailList) {
-        this.siteDetailList = siteDetailList;
-    }
 
-    public void addPasswordStorageDetail(VaultEntryVo vaultEntryVo){
-        this.siteDetailList.add(vaultEntryVo);
-    }
 }

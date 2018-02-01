@@ -54,17 +54,17 @@ public class HashCreator {
     }
 
 
-    public  String decrypt(String value,String password,String initVector){
+    public  String decrypt(String valueToBeDecrypted,String userSuppliedSalt,String initVector){
         try {
 
             IvParameterSpec iv = new IvParameterSpec(getInitVectorFrom(initVector).getBytes("UTF-8"));
 
-            SecretKeySpec skeySpec = new SecretKeySpec(getSalt(password).getBytes(), "AES");
+            SecretKeySpec skeySpec = new SecretKeySpec(getSalt(userSuppliedSalt).getBytes(), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 
-            byte[] original = cipher.doFinal(Base64.decodeBase64(value));
+            byte[] original = cipher.doFinal(Base64.decodeBase64(valueToBeDecrypted));
 
             return new String(original);
         } catch (Exception ex) {
@@ -79,16 +79,16 @@ public class HashCreator {
         return substring(StringUtils.join(initVectorLocal,initVector),0,16);
     }
 
-    public  String encrypt(String value,String password,String initVector){
+    public  String encrypt(String valueToBeDecrypted,String salt,String initVector){
         try {
 
             IvParameterSpec iv = new IvParameterSpec(getInitVectorFrom(initVector).getBytes("UTF-8"));
-            SecretKeySpec skeySpec = new SecretKeySpec(getSalt(password).getBytes(), "AES");
+            SecretKeySpec skeySpec = new SecretKeySpec(getSalt(salt).getBytes(), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
 
-            byte[] original = cipher.doFinal(value.getBytes());
+            byte[] original = cipher.doFinal(valueToBeDecrypted.getBytes());
 
             return Base64.encodeBase64String(original);
         } catch (Exception ex) {
@@ -97,8 +97,8 @@ public class HashCreator {
 
     }
 
-    private String getSalt(String password) {
-        return substring(StringUtils.join(password,passwordaSalt),0,16);
+    private String getSalt(String initialSalt) {
+        return substring(StringUtils.join(initialSalt,passwordaSalt),0,16);
     }
 
 
@@ -219,11 +219,7 @@ public class HashCreator {
         }
     }
 
-    public static String random(int length) {
-        byte[] salt = new byte[length];
-        new SecureRandom().nextBytes(salt);
-        return hex(salt);
-    }
+
 
     public static String base64(byte[] bytes) {
         return Base64.encodeBase64String(bytes);

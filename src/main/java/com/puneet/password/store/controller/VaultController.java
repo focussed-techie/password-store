@@ -44,10 +44,11 @@ public class VaultController {
     @RequestMapping(value = "/dashboard",method = RequestMethod.GET)
     public List<VaultEntryVo> getDashobard(HttpSession session){
         List<VaultEntryVo> allSiteDetails = vaultService.getAllEntries();
-        return allSiteDetails.stream().map(siteDetailVo -> {
+        List<VaultEntryVo> processedVaultValues = allSiteDetails.stream().map(siteDetailVo -> {
             siteDetailVo.setPassword(hashCreator.encryptUsingSymetricKey(siteDetailVo.getPassword(),session.getId()));
             return siteDetailVo;
         }).collect(Collectors.toList());
+        return processedVaultValues;
     }
 
     @RequestMapping(value = "/publicKey",method = RequestMethod.GET,produces = MediaType.TEXT_HTML_VALUE)

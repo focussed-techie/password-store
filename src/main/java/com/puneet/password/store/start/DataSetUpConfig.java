@@ -24,7 +24,7 @@ public class DataSetUpConfig {
         vaultEntryVo.setUsername("test");
         vaultEntryVo.setSiteName("tester");
         vaultEntryVo.setPassword(hashCreator.encrypt("value","testing","testing"));
-        userDetailsVo.addPasswordStorageDetail(vaultEntryVo);
+
      //   userDetailsService.save(userDetailsVo);
         };
     }

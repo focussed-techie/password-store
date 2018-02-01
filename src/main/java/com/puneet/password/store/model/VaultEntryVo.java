@@ -25,6 +25,9 @@ public class VaultEntryVo {
     @Column(name="SITE_URL")
     private String siteUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserDetailsVo user;
+
 
     public Long getId() {
         return id;
@@ -67,4 +70,11 @@ public class VaultEntryVo {
         this.siteUrl = siteUrl;
     }
 
+    public UserDetailsVo getUser() {
+        return user;
+    }
+
+    public void setUser(UserDetailsVo user) {
+        this.user = user;
+    }
 }

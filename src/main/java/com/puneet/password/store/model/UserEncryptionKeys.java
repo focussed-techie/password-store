@@ -20,8 +20,7 @@ private String salt;
 
 
 
-
-    @OneToOne
+ @OneToOne
 @JoinColumn(name = "USERNAME")
 private UserDetailsVo userName;
 
